@@ -1,0 +1,75 @@
+notation crows-foot
+title Instagram Thrift Creator Store
+
+customers [icon: users, color: Blue]{
+  id serial pk
+  name varchar(100) not null
+  email varchar(255) unique not null
+  phone varchar(20)
+  created_at timestamp
+}
+
+products [icon: box, color: Purple] {
+  id serial pk
+  name varchar(255) not null
+  description text
+  product_type varchar(20) ENUM('thrift', 'handmade') not null
+  category varchar(100)
+  condition varchar(20) ENUM('new', 'like_new', 'used')
+  base_price decimal(10,2) not null
+  created_at timestamp
+}
+
+product_variants [icon: layers, color: Red, colorMode: pastel] {
+  id serial pk
+  product_id int fk
+  size varchar(20)
+  color varchar(20)
+  stock int not null          
+  price decimal(10,2)
+}
+
+orders [icon: shopping-cart, color: Black] {
+  id serial pk
+  customer_id int fk
+  total_amount decimal(10,2)
+  status varchar(20) ENUM('pending', 'confirmed', 'shipped', 'delivered', 'cancelled')
+  created_at timestamp
+}
+
+order_items [icon: list, color: Orange] {
+  id serial pk
+  order_id int fk
+  variant_id int fk
+  quantity int not null
+  price_at_purchase decimal(10,2)
+}
+
+payments [icon: credit-card, color: Yellow] {
+  id serial pk
+  order_id int fk unique
+  amount decimal(10,2)
+  method varchar(20) ENUM('upi', 'cod', 'card')
+  status varchar(20) ENUM('pending', 'completed', 'failed')
+  paid_at timestamp
+}
+
+shipments [icon: truck, color: Green] {
+  id serial pk
+  order_id int fk unique
+  status varchar(20) ENUM('not_shipped', 'shipped', 'delivered')
+  tracking_number varchar(100)
+  shipped_at timestamp
+  delivered_at timestamp
+}
+
+
+customers.id < orders.customer_id
+
+products.id < product_variants.product_id
+
+orders.id > order_items.order_id
+product_variants.id > order_items.variant_id
+
+orders.id - payments.order_id
+orders.id - shipments.order_id
