@@ -1,0 +1,103 @@
+title Fitness Influencer Coaching Platform
+notation crows-foot
+colorMode pastel
+
+User [icon: user, color: Yellow] {
+  user_id PK
+  name
+  email
+  password
+  created_at
+}
+
+Client [icon: user, color: Blue] {
+  client_id PK FK
+  age
+  gender
+  fitness_goal
+}
+
+Trainer [icon: activity, color: Orange] {
+  trainer_id PK FK
+  bio
+  experience_years
+  specialization
+}
+
+Plan [icon: box, color: Yellow] {
+  plan_id PK
+  trainer_id FK
+  plan_name
+  price
+  duration
+  description
+}
+
+Subscription [icon: file-text, color: Black] {
+  subscription_id PK
+  client_id FK
+  plan_id FK
+  start_date
+  end_date
+  status
+}
+
+Payment [icon: credit-card, color: Red] {
+  payment_id PK
+  subscription_id FK
+  amount
+  payment_date
+  status
+  payment_method
+}
+
+Session [icon: video, color: Green] {
+  session_id PK
+  trainer_id FK
+  client_id FK
+  session_type
+  scheduled_at
+  status
+  meeting_link
+}
+
+CheckInReport [icon: bar-chart, color: Purple] {
+  checkin_id PK
+  client_id FK
+  submitted_at
+  weight
+  body_fat
+  waist
+  chest
+  diet_adherence
+  workout_adherence
+  energy_level
+  sleep_quality
+  notes
+}
+
+TrainerFeedback [icon: message-square, color: Blue, colorMode: bold] {
+  feedback_id PK
+  checkin_id FK
+  trainer_id FK
+  comments
+  created_at
+}
+
+User.user_id > Client.client_id: [color: yellow]
+User.user_id > Trainer.trainer_id: [color: yellow]
+
+Trainer.trainer_id > Plan.trainer_id: [color: orange]
+
+Client.client_id > Subscription.client_id: [color: blue]
+Plan.plan_id > Subscription.plan_id: [color: "#ca2424"]
+
+Subscription.subscription_id > Payment.subscription_id: [color: "#b3e996"]
+
+Trainer.trainer_id > Session.trainer_id: [color: orange]
+Client.client_id > Session.client_id: [color: blue]
+
+Client.client_id > CheckInReport.client_id: [color: blue]
+
+CheckInReport.checkin_id > TrainerFeedback.checkin_id: [color: purple]
+Trainer.trainer_id > TrainerFeedback.trainer_id: [color: orange]
