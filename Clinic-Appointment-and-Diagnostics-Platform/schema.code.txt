@@ -1,0 +1,116 @@
+title Clinic Appointment and Diagnostics Platform
+notation crows-foot
+patients [icon: user, color: Green, colorMode: bold]{
+  id serial pk
+  firstname varchar(50) not null
+  lastname varchar(50)
+  age int not null
+  email varchar(250) not null unique
+  gender varchar(20)
+  created_at timestamp
+  updated_at timestamp
+}
+
+doctors [icon: doctor, colorMode: bold, color: Yellow]{
+  id serial pk
+  firstname varchar(50) not null
+  lastname varchar(50)
+  age int not null
+  email varchar(250) unique
+  gender varchar(20)
+  created_at timestamp
+  updated_at timestamp
+}
+
+departments [icon: heart, color: Blue, colorMode: bold]{
+  id serial pk
+  dept_name varchar(50) not null
+  domain varchar(50) not null
+  description text
+  created_at timestamp
+  updated_at timestamp
+}
+
+specialities [icon: star, color: Red, colorMode: bold]{
+  id serial pk
+  doctor_id int fk not null
+  dept_id int fk not null
+  experience int not null
+  created_at timestamp
+  updated_at timestamp
+}
+
+appointments [icon: notebook, colorMode: bold, color: Orange]{
+  id serial pk
+  patient_id int fk not null
+  doctor_id int fk not null
+
+  appointment_time timestamp not null
+  status enum('scheduled','completed','cancelled','no_show') not null
+  created_at timestamp
+  updated_at timestamp
+}
+
+consultations [icon: notebook, colorMode: bold, color: Purple]{
+  id serial pk
+  appointment_id int fk not null unique
+
+  consultation_date timestamp
+  diagnosis text
+  notes text
+  created_at timestamp
+  updated_at timestamp
+}
+
+diagnostics [icon: test-tube, colorMode: bold, color: Black]{
+  test_id serial pk
+  consultation_id int fk not null
+
+  test_name varchar(50)
+  description text
+  status enum('ordered','in_progress','completed') not null
+
+  ordered_at timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+
+reports [icon: report, colorMode: bold, color: Yellow]{
+  report_id serial pk
+  test_id int fk not null
+
+  result text
+  report_file_url varchar
+  generated_date timestamp
+  status enum('pending','ready','reviewed') not null
+  created_at timestamp
+  updated_at timestamp
+}
+
+payments [icon: credit-card, color: Red, colorMode: bold] {
+  payment_id serial pk
+  consultation_id int fk not null
+
+  amount decimal(10,2) not null
+  payment_date timestamp
+
+  status enum('pending','completed','failed') not null
+  payment_method enum('card','cash','online_banking','upi') not null
+  created_at timestamp
+  updated_at timestamp
+}
+
+doctors.id < specialities.doctor_id
+departments.id < specialities.dept_id
+
+patients.id < appointments.patient_id
+
+doctors.id < appointments.doctor_id
+
+appointments.id < consultations.appointment_id
+
+consultations.id < diagnostics.consultation_id
+
+diagnostics.test_id < reports.test_id
+
+consultations.id < payments.consultation_id
