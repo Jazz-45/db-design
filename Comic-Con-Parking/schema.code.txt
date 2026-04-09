@@ -1,0 +1,103 @@
+title Comic-Con Parking System
+notation crows-foot
+
+visitors [icon: user, color: Green, colorMode: bold]{
+  id serial pk
+  fname varchar(50) not null
+  lname varchar(50)
+  email varchar(250) not null unique
+  role ENUM('cosplayer','exhibitor','creator','staff','VIP','general')
+}
+
+vehicle_types [icon: truck, color: Blue, colorMode: bold]{
+  id serial pk
+  type_name varchar(20) not null unique
+}
+
+vehicles [icon: steering-wheel, color: Yellow, colorMode: bold]{
+  id serial pk
+  vehicle_number char(10) not null unique
+  vehicle_type_id int fk
+  owner_id int fk
+}
+
+levels [icon: building, color: Purple, colorMode: bold]{
+  id serial pk
+  level_no varchar(2) not null unique
+}
+
+zones [icon: map, color: Yellow, colorMode: bold]{
+  id serial pk
+  zone_code char(1) not null unique
+  level_id int fk
+}
+
+spot_categories [icon: tag, color: Orange, colorMode: bold]{
+  id serial pk
+  category_name varchar(20) not null unique
+}
+
+parking_spots [icon: square-parking, color: Green, colorMode: bold]{
+  id serial pk
+  spot_number varchar(10) not null
+  zone_id int fk
+  category_id int fk
+  is_available boolean not null
+}
+
+spot_vehicle_map [icon: shuffle, color: Black, colorMode: bold]{
+  id serial pk
+  spot_category_id int fk
+  vehicle_type_id int fk
+}
+
+parking_sessions [icon: clock, color: Red, colorMode: bold]{
+  id serial pk
+  vehicle_id int fk
+  spot_id int fk
+  entry_time timestamp not null
+  exit_time timestamp
+  status ENUM('active','completed')
+}
+
+tickets [icon: ticket, color: Orange, colorMode: bold]{
+  id serial pk
+  session_id int fk
+  issued_at timestamp not null
+}
+
+pricing [icon: currency-rupee, color: Purple, colorMode: bold]{
+  id serial pk
+  vehicle_type_id int fk
+  price_per_hour decimal(10,2) not null
+}
+
+payments [icon: credit-card, color: Red, colorMode: bold]{
+  id serial pk
+  session_id int fk
+  amount decimal(10,2) not null
+  payment_status ENUM('paid','pending')
+  payment_method ENUM('UPI','cash','card')
+  paid_at timestamp
+}
+
+// Relationships
+
+visitors.id < vehicles.owner_id
+vehicle_types.id < vehicles.vehicle_type_id
+
+levels.id < zones.level_id
+zones.id < parking_spots.zone_id
+
+spot_categories.id < parking_spots.category_id
+
+spot_categories.id < spot_vehicle_map.spot_category_id
+vehicle_types.id < spot_vehicle_map.vehicle_type_id
+
+vehicles.id < parking_sessions.vehicle_id
+parking_spots.id < parking_sessions.spot_id
+
+parking_sessions.id - tickets.session_id
+parking_sessions.id - payments.session_id
+
+vehicle_types.id < pricing.vehicle_type_id
