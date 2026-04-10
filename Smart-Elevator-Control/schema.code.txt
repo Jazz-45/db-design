@@ -1,0 +1,88 @@
+title Smart Elevator Control
+notation crows-foot
+
+buildings [icon: building, colorMode: bold, color: Yellow] {
+  id serial pk
+  name text
+  location text
+}
+
+floors [icon: layers] {
+  id serial pk
+  building_id int fk
+  floor_number int
+}
+
+shafts [icon: columns, color: Orange, colorMode: bold] {
+  id serial pk
+  building_id int fk
+}
+
+elevators [icon: arrow-up-circle, color: Red, colorMode: bold] {
+  id serial pk
+  building_id int fk
+  shaft_id int fk unique
+}
+
+elevator_floor_map [icon: shuffle, color: Yellow] {
+  id serial pk
+  elevator_id int fk
+  floor_id int fk
+}
+
+floor_requests [icon: bell, colorMode: bold, color: Green] {
+  id serial pk
+  floor_id int fk
+  direction text
+  request_time timestamp
+  status text
+}
+
+ride_assignments [icon: link] {
+  id serial pk
+  request_id int fk unique
+  elevator_id int fk
+  assigned_time timestamp
+}
+
+ride_logs [icon: activity, color: Red] {
+  id serial pk
+  elevator_id int fk
+  assignment_id int fk
+  start_time timestamp
+  end_time timestamp
+}
+
+elevator_status [icon: signal, colorMode: bold, color: Blue] {
+  id serial pk
+  elevator_id int fk
+  status text
+  timestamp timestamp
+}
+
+maintenance [icon: tool, color: Purple, colorMode: bold] {
+  id serial pk
+  elevator_id int fk
+  issue text
+  start_time timestamp
+  end_time timestamp
+}
+
+buildings.id < floors.building_id
+buildings.id < elevators.building_id
+buildings.id < shafts.building_id
+
+shafts.id - elevators.shaft_id
+
+elevators.id < elevator_floor_map.elevator_id
+floors.id < elevator_floor_map.floor_id
+
+floors.id < floor_requests.floor_id
+floor_requests.id - ride_assignments.request_id
+elevators.id < ride_assignments.elevator_id
+
+ride_assignments.id - ride_logs.assignment_id
+elevators.id < ride_logs.elevator_id
+
+elevators.id < elevator_status.elevator_id
+elevators.id < maintenance.elevator_id
