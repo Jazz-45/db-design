@@ -1,0 +1,63 @@
+title IPL
+notation crows-foot
+
+players [icon: shirt, colorMode: bold, color: Yellow]{
+  id serial pk
+  fname varchar(20) not null
+  lname varchar(20) not null
+  role varchar(30)
+  nationality varchar(30)
+
+  team_id int fk
+}
+
+teams [icon: ball, color: Blue, colorMode: bold] {
+  id serial pk
+  team_name varchar(50)
+  city varchar(50)
+  coach varchar(50)
+  team_logo string
+}
+
+sponsors [icon: money, colorMode: bold, color: Orange] {
+  id serial pk
+  brand_name string
+  category string
+  logo string
+}
+
+team_sponsors [colorMode: bold, color: Green] {
+  team_id int fk
+  sponsor_id int fk
+  contract_value decimal
+}
+
+broadcasts [icon: tv, colorMode: bold, color: Red] {
+  id serial pk
+  platform_name string
+  type string   
+}
+
+matches [colorMode: bold, color: Purple] {
+  id serial pk
+  match_date date
+  venue string
+
+  team1_id int fk
+  team2_id int fk
+  winner_team_id int fk
+  broadcast_id int fk
+}
+
+// Relationships
+
+players.team_id > teams.id
+
+team_sponsors.team_id > teams.id
+team_sponsors.sponsor_id > sponsors.id
+
+matches.team1_id > teams.id
+matches.team2_id > teams.id
+matches.winner_team_id > teams.id
+
+matches.broadcast_id > broadcasts.id
